@@ -59,6 +59,23 @@ const slice = createSlice({
       const { postId, reactions } = action.payload;
       state.postsById[postId].reactions = reactions;
     },
+
+    deletePostSuccess(state, action) {
+      state.isLoading = false;
+      state.error = null;
+      const { id } = action.payload;
+      delete state.postsById[id];
+      state.currentPagePosts = state.currentPagePosts.filter(
+        (postId) => postId !== id
+      );
+    },
+
+    editPostSuccess(state, action) {
+      state.isLoading = false;
+      state.error = null;
+      const { id } = action.payload;
+      state.postsById[id] = { ...state.postsById[id], ...action.payload };
+    },
   },
 });
 
@@ -122,3 +139,34 @@ export const sendPostReaction =
       toast.error(error.message);
     }
   };
+
+export const deletePost = (id) => async (dispatch) => {
+  dispatch(slice.actions.startLoading());
+  try {
+    const response = await apiService.delete(`/posts/${id}`);
+    dispatch(slice.actions.deletePostSuccess({ ...response.data, id }));
+    toast.success("Post deleted successfully");
+    dispatch(getCurrentUserProfile());
+  } catch (error) {
+    dispatch(slice.actions.hasError(error.message));
+    toast.error(error.message);
+  }
+};
+
+export const editPost = (id, data) => async (dispatch) => {
+  dispatch(slice.actions.startLoading());
+  try {
+    const content = data.content;
+    const imageUrl = await cloudinaryUpload(data.image);
+    const image = imageUrl;
+    const response = await apiService.put(`/posts/${id}`, {
+      content,
+      image,
+    });
+    dispatch(slice.actions.editPostSuccess({ ...response.data, id }));
+    toast.success("Update post successfully");
+  } catch (error) {
+    dispatch(slice.actions.hasError(error.message));
+    toast.error(error.message);
+  }
+};

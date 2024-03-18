@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Box, Card, alpha, Stack } from "@mui/material";
 
 import { FormProvider, FTextField, FUploadImage } from "../../components/form";
@@ -8,6 +8,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { createPost } from "./postSlice";
 import { LoadingButton } from "@mui/lab";
+
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 const yupSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
@@ -20,6 +23,7 @@ const defaultValues = {
 
 function PostForm() {
   const { isLoading } = useSelector((state) => state.post);
+  const [isHovered, setIsHovered] = useState(false);
 
   const methods = useForm({
     resolver: yupResolver(yupSchema),
@@ -49,20 +53,20 @@ function PostForm() {
     [setValue]
   );
 
-  // const handleFile = (e) => {
-  //   const file = fileInput.current.files[0];
-  //   if (fileInput.current.files[0]) {
-  //     setValue("image", file);
-  //   }
-  // };
-
   const onSubmit = (data) => {
-    // console.log(data);
     dispatch(createPost(data)).then(() => reset());
   };
 
   return (
-    <Card sx={{ p: 3 }}>
+    <Card
+      sx={{
+        p: 3,
+        transition: "transform 0.3s",
+        transform: isHovered ? "scale(1.02)" : "scale(1)",
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           <FTextField
@@ -79,13 +83,14 @@ function PostForm() {
             }}
           />
 
-          <FUploadImage
-            name="image"
-            accept="image/*"
-            maxSize={3145728}
-            onDrop={handleDrop}
-          />
-          {/* <input type="file" ref={fileInput} onChange={handleFile} /> */}
+          {isHovered && (
+            <FUploadImage
+              name="image"
+              accept="image/*"
+              maxSize={3145728}
+              onDrop={handleDrop}
+            />
+          )}
 
           <Box
             sx={{
