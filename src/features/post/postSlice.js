@@ -74,7 +74,10 @@ const slice = createSlice({
       state.isLoading = false;
       state.error = null;
       const { id } = action.payload;
-      state.postsById[id] = { ...state.postsById[id], ...action.payload };
+      state.postsById[id] = {
+        ...state.postsById[id],
+        content: action.payload.content,
+      };
     },
   },
 });

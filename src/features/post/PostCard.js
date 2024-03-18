@@ -115,7 +115,11 @@ function PostCard({ post }) {
       />
 
       {editMode ? (
-        <EditPostForm post={post} handleCloseModal={handleCloseModal} />
+        <EditPostForm
+          post={post}
+          handleCloseModal={handleCloseModal}
+          setEditMode={setEditMode}
+        />
       ) : (
         <Stack spacing={2} sx={{ p: 3 }}>
           <Typography>{post.content}</Typography>

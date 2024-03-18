@@ -25,7 +25,7 @@ const yupSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
 });
 
-function EditPostForm({ post, handleCloseModal }) {
+function EditPostForm({ post, handleCloseModal, setEditMode }) {
   const { isLoading } = useSelector((state) => state.post);
 
   const methods = useForm({
@@ -60,6 +60,7 @@ function EditPostForm({ post, handleCloseModal }) {
 
   const onSubmit = (updatedData) => {
     dispatch(editPost(post._id, updatedData));
+    setEditMode(false);
   };
 
   return (

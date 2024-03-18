@@ -52,11 +52,6 @@ const slice = createSlice({
     deleteCommentSuccess(state, action) {
       state.isLoading = false;
       state.error = null;
-      // const { deletedId } = action.payload;
-      // state.postsById[deletedId] = null;
-      // state.currentPageByPost = state.currentPageByPost.filter(
-      //   (item) => item !== deletedId
-      // );
     },
   },
 });
